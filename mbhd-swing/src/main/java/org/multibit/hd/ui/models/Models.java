@@ -131,7 +131,7 @@ public class Models {
         Preconditions.checkNotNull(paymentSessionSummary);
 
         WalletService walletService = CoreServices.getOrCreateWalletService(WalletManager.INSTANCE.getCurrentWalletSummary().get().getWalletId());
-        if ( paymentSessionSummary.getPaymentSession().isPresent()) {
+        if (paymentSessionSummary.hasPaymentSession()) {
 
           // Build a PaymentRequestData for persistence
           PaymentRequestData paymentRequestData = new PaymentRequestData(paymentSessionSummary);

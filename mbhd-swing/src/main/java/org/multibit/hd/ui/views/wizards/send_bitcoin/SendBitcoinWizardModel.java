@@ -814,28 +814,24 @@ public class SendBitcoinWizardModel extends AbstractHardwareWalletWizardModel<Se
     if (lastBitcoinSentEvent != null && lastBitcoinSentEvent.isSendWasSuccessful()) {
       Preconditions.checkNotNull(getPaymentRequestData());
       Preconditions.checkState(getPaymentRequestData().isPresent());
-      ;
       Preconditions.checkNotNull(getPaymentRequestData().get().getPaymentSessionSummary());
       Preconditions.checkState(getPaymentRequestData().get().getPaymentSessionSummary().isPresent());
-      Preconditions.checkState(getPaymentRequestData().get().getPaymentSessionSummary().get().getPaymentSession().isPresent());
+      Preconditions.checkState(getPaymentRequestData().get().getPaymentSessionSummary().get().hasPaymentSession());
 
-      PaymentSession paymentSession = getPaymentRequestData().get()
-        .getPaymentSessionSummary().get()
-        .getPaymentSession().get();
+      PaymentSessionSummary paymentSessionSummary = getPaymentRequestData().get().getPaymentSessionSummary().get();
 
       // Send the Payment message to the merchant
       try {
         final List<Transaction> transactionsSent = Lists.newArrayList(lastBitcoinSentEvent.getTransaction().get());
         final PaymentRequestData finalPaymentRequestData = getPaymentRequestData().get();
 
-        log.debug("Sending payment details to requestor at URL {}", paymentSession.getPaymentUrl());
-        final Protos.Payment finalPayment = paymentSession.getPayment(transactionsSent,
-                  lastBitcoinSentEvent.getChangeAddress(),
-                  getSendBitcoinEnterPaymentMemoPanelModel().getPaymentMemo());
-        final ListenableFuture<PaymentProtocol.Ack> future = paymentSession.sendPayment(
-          transactionsSent,
-          lastBitcoinSentEvent.getChangeAddress(),
-          getSendBitcoinEnterPaymentMemoPanelModel().getPaymentMemo());
+        final Optional<PaymentSessionSummary.PaymentProtocolResponseDto> dto = paymentSessionSummary.sendPaymentSessionPayment(
+            transactionsSent,
+            lastBitcoinSentEvent.getChangeAddress(),
+            getSendBitcoinEnterPaymentMemoPanelModel().getPaymentMemo());
+
+        final Protos.Payment finalPayment = dto.get().getFinalPayment();
+        final ListenableFuture<PaymentProtocol.Ack> future = dto.get().getFuture();
 
         if (future != null) {
           Futures.addCallback(

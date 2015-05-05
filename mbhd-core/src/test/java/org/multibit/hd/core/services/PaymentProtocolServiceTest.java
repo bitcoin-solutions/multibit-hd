@@ -129,7 +129,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.ERROR);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isFalse();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isFalse();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_ERROR);
 
   }
@@ -143,7 +143,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.UNTRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isFalse();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isFalse();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_INVALID_REQUEST_URL);
 
   }
@@ -157,7 +157,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.UNTRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isFalse();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isFalse();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_PKI_INVALID);
 
   }
@@ -171,7 +171,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.UNTRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isTrue();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isTrue();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_PKI_INVALID);
 
   }
@@ -189,7 +189,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.ERROR);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isFalse();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isFalse();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_ERROR);
 
   }
@@ -207,7 +207,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.UNTRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isTrue();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isTrue();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_PKI_INVALID);
 
   }
@@ -227,7 +227,7 @@ public class PaymentProtocolServiceTest {
 
     // Assert
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.UNTRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isTrue();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isTrue();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_PKI_INVALID);
 
   }
@@ -245,17 +245,16 @@ public class PaymentProtocolServiceTest {
 
     // Assert the summary
     assertThat(paymentSessionSummary.getStatus()).isEqualTo(PaymentSessionStatus.TRUSTED);
-    assertThat(paymentSessionSummary.getPaymentSession().isPresent()).isTrue();
+    assertThat(paymentSessionSummary.hasPaymentSession()).isTrue();
     assertThat(paymentSessionSummary.getMessageKey()).isEqualTo(CoreMessageKey.PAYMENT_SESSION_OK);
     assertThat(paymentSessionSummary.getSeverity()).isEqualTo(RAGStatus.GREEN);
     assertThat(paymentSessionSummary.getMessageData()[0]).isEqualTo("Please donate to MultiBit");
     assertThat(paymentSessionSummary.getPkiVerificationData().get().displayName).isEqualTo("Test, Test, US");
 
-    // Assert the PaymentDetails
-    Protos.PaymentDetails paymentDetails = paymentSessionSummary.getPaymentSession().get().getPaymentDetails();
-    assertThat(paymentDetails.getMemo()).isEqualTo("Please donate to MultiBit");
-    assertThat(paymentDetails.getExpires()).isEqualTo(0L);
-    assertThat(paymentDetails.getPaymentUrl()).isEqualTo("https://localhost:8443/payment");
+    // Assert the PaymentDetails are there
+    assertThat(paymentSessionSummary.getPaymentSessionMemo().get()).isEqualTo("Please donate to MultiBit");
+    assertThat(paymentSessionSummary.getPaymentSessionExpires().isPresent()).isFalse();
+    assertThat(paymentSessionSummary.getPaymentSessionPaymentUrl().get()).isEqualTo("https://localhost:8443/payment");
   }
 
   @Test

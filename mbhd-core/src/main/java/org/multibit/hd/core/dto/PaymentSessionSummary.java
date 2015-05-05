@@ -2,15 +2,25 @@ package org.multibit.hd.core.dto;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ListenableFuture;
+import org.bitcoin.protocols.payments.Protos;
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.protocols.payments.PaymentProtocol;
 import org.bitcoinj.protocols.payments.PaymentProtocolException;
 import org.bitcoinj.protocols.payments.PaymentSession;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.cert.CertPathValidatorException;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -315,11 +325,120 @@ public class PaymentSessionSummary {
   }
 
   /**
-   * @return The BIP70 Payment Session containing the Payment Request and other meta data (the PKI information may not be accurate)
-   *
+   * @return true if there is a payment session
    */
-  public Optional<PaymentSession> getPaymentSession() {
-    return paymentSession;
+  public boolean hasPaymentSession() {
+    return paymentSession.isPresent();
+  }
+
+  /**
+   * @return optional boolean, which holds true if the payment session has outputs
+   */
+  public Optional<Boolean> hasPaymentSessionOutputs() {
+    if (hasPaymentSession()) {
+      return Optional.of(!paymentSession.get().getOutputs().isEmpty());
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The memo from the payment session object
+   */
+  public Optional<String> getPaymentSessionMemo() {
+    if (hasPaymentSession()) {
+      return Optional.fromNullable(paymentSession.get().getMemo());
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The value from the payment session object
+   */
+  public Optional<Coin> getPaymentSessionValue() {
+    if (hasPaymentSession()) {
+      return Optional.fromNullable(paymentSession.get().getValue());
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The expires from the payment session object
+   */
+  public Optional<DateTime> getPaymentSessionExpires() {
+    if (hasPaymentSession() && paymentSession.get().getExpires() != null) {
+      return Optional.of(new DateTime(paymentSession.get().getExpires()));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The date from the payment session object
+   */
+  public Optional<DateTime> getPaymentSessionDate() {
+    if (hasPaymentSession() && paymentSession.get().getDate() != null) {
+      return Optional.of(new DateTime(paymentSession.get().getDate()));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The payment URL from the payment session object
+   */
+  public Optional<String> getPaymentSessionPaymentUrl() {
+    if (hasPaymentSession()) {
+      return Optional.fromNullable(paymentSession.get().getPaymentUrl());
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * @return The payment request from the payment session object
+   */
+  public Optional<Protos.PaymentRequest> getPaymentSessionPaymentRequest() {
+    if (hasPaymentSession()) {
+      return Optional.fromNullable(paymentSession.get().getPaymentRequest());
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  public Optional<PaymentProtocolResponseDto> sendPaymentSessionPayment(List<Transaction> transactions, @Nullable Address refundAddr, @Nullable String memo)
+      throws IOException, PaymentProtocolException {
+    if (hasPaymentSession()) {
+      log.debug("Sending payment details to requester at URL '{}'", paymentSession.get().getPaymentUrl());
+      Protos.Payment payment = paymentSession.get().getPayment(transactions, refundAddr, memo);
+      ListenableFuture<PaymentProtocol.Ack> future = paymentSession.get().sendPayment(transactions, refundAddr, memo);
+      return Optional.of(new PaymentProtocolResponseDto(payment, future));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * Just a data holder for the result when sending the payment.
+   */
+  public static class PaymentProtocolResponseDto {
+    private final Protos.Payment finalPayment;
+    private final ListenableFuture<PaymentProtocol.Ack> future;
+
+    public PaymentProtocolResponseDto(Protos.Payment finalPayment, ListenableFuture<PaymentProtocol.Ack> future) {
+      this.finalPayment = finalPayment;
+      this.future = future;
+    }
+
+    public Protos.Payment getFinalPayment() {
+      return finalPayment;
+    }
+
+    public ListenableFuture<PaymentProtocol.Ack> getFuture() {
+      return future;
+    }
   }
 
   /**

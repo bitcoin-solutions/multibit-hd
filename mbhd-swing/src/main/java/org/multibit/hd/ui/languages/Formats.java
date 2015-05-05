@@ -391,7 +391,7 @@ public class Formats {
    */
   public static Optional<String> formatAlertMessage(PaymentSessionSummary paymentSessionSummary) {
 
-    if (!paymentSessionSummary.getPaymentSession().isPresent()) {
+    if (!paymentSessionSummary.hasPaymentSession()) {
             // Construct a suitable alert message
       return Optional.of(Languages.safeText(
           paymentSessionSummary.getMessageKey(),
@@ -422,12 +422,11 @@ public class Formats {
     }
 
     // Extract merchant information (payment session must be present)
-    PaymentSession paymentSession = paymentSessionSummary.getPaymentSession().get();
-    Optional<Coin> amount = Optional.fromNullable(paymentSession.getValue());
+    Optional<Coin> amount = paymentSessionSummary.getPaymentSessionValue();
 
     // We do not truncate here since it is needed for the history
     // The UI will handle truncation
-    String label = paymentSession.getMemo();
+    String label = paymentSessionSummary.getPaymentSessionMemo().orNull();
     if (Strings.isNullOrEmpty(label)) {
       label = Languages.safeText(MessageKey.NOT_AVAILABLE);
     }
@@ -435,7 +434,7 @@ public class Formats {
     Optional<String> alertMessage = Optional.absent();
 
     // Only proceed if we have outputs
-    if (!paymentSession.getOutputs().isEmpty()) {
+    if (paymentSessionSummary.hasPaymentSessionOutputs().get()) {
 
       final String messageAmount;
       if (amount.isPresent()) {
