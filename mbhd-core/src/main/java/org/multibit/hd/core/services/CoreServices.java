@@ -689,8 +689,8 @@ public class CoreServices {
       // Wrap the client in a service for high level API suitable for downstream applications
       return Optional.of(new HardwareWalletService(client));
 
-    } catch (Throwable throwable) {
-      log.warn("Could not create the hardware wallet.", throwable);
+    } catch (Exception e) {
+      log.warn("Could not create the hardware wallet.", e);
       return Optional.absent();
     }
   }
@@ -713,8 +713,8 @@ public class CoreServices {
       // Wrap the client in a service for high level API suitable for downstream applications
       return Optional.of(new HardwareWalletService(client));
 
-    } catch (Throwable throwable) {
-      log.warn("Could not create the hardware wallet.", throwable);
+    } catch (Exception e) {
+      log.warn("Could not create the hardware wallet.", e);
       return Optional.absent();
     }
   }
