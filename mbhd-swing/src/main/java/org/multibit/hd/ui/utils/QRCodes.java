@@ -39,8 +39,7 @@ public class QRCodes {
     final ByteMatrix matrix;
     try {
 
-      QRCode code = new QRCode();
-      matrix = encode(contents, code);
+      matrix = encode(contents);
 
     } catch (com.google.zxing.WriterException e) {
       return Optional.absent();
@@ -80,11 +79,11 @@ public class QRCodes {
    *
    * @return A QR Code as a ByteMatrix 2D array of greyscale values
    */
-  private static ByteMatrix encode(String contents, QRCode code) throws WriterException {
+  private static ByteMatrix encode(String contents) throws WriterException {
 
     Preconditions.checkState(!Strings.isNullOrEmpty(contents), "'contents' must be present");
 
-    Encoder.encode(contents, ErrorCorrectionLevel.L, null, code);
+    QRCode code = Encoder.encode(contents, ErrorCorrectionLevel.L);
 
     // Use a multiple of 2 for desktop screen
     return renderResult(code, 2);
