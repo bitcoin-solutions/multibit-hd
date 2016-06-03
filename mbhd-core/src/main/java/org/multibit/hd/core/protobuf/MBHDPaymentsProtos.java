@@ -741,11 +741,7 @@ public final class MBHDPaymentsProtos {
           
           return false;
         }
-        if (!hasCurrency()) {
-          
-          return false;
-        }
-        return true;
+        return hasCurrency();
       }
 
       public Builder mergeFrom(

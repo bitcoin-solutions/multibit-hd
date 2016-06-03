@@ -415,11 +415,7 @@ public final class MBHDContactsProtos {
       }
 
       public final boolean isInitialized() {
-        if (!hasTagValue()) {
-          
-          return false;
-        }
-        return true;
+        return hasTagValue();
       }
 
       public Builder mergeFrom(
