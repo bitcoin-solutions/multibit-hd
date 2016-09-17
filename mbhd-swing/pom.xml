@@ -122,7 +122,7 @@
                     <urn>com.google.code.gson:gson:2.2.2:jar:null:compile:1f96456ca233dec780aa224bff076d8e8bca3908</urn>
                     <urn>com.google.guava:guava:16.0.1:jar:null:compile:5fa98cd1a63c99a44dd8d3b77e4762b066a5d0c5</urn>
                     <urn>com.google.protobuf:protobuf-java:2.5.0:jar:null:compile:a10732c76bfacdbd633a7eb0f7968b1059a65dfa</urn>
-                    <urn>com.google.zxing:core:1.7:jar:null:compile:888814a387fc7570d50c4fbf4d20555d4fdd7646</urn>
+                    <urn>com.google.zxing:core:3.2.1:jar:null:compile:2287494d4f5f9f3a9a2bb6980e3f32053721b315</urn>
                     <urn>com.googlecode.jcsv:jcsv:1.4.0:jar:null:compile:3b2dfd1ff251cdcf4745a7643a966f14d10e2532</urn>
                     <urn>com.lambdaworks:scrypt:1.4.0:jar:null:compile:906506b74f30c8c20bccd9ed4a11112d8941fe87</urn>
                     <urn>com.madgag.spongycastle:core:1.51.0.0:jar:null:compile:0f642963312ea0e615ad65f28adc5a5b3a2a0862</urn>
@@ -296,7 +296,7 @@
     <dependency>
       <groupId>com.google.zxing</groupId>
       <artifactId>core</artifactId>
-      <version>1.7</version>
+      <version>3.2.1</version>
     </dependency>
 
   </dependencies>
