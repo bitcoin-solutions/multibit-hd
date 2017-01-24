@@ -7,8 +7,8 @@ import org.bitcoinj.core.*;
  */
 public class FeeService {
     public static final Coin MINIMUM_FEE_PER_KB = Coin.valueOf(1000);   // Slightly higher than the minimum relay fee (1000 sat per KB)  as per Bitcoin Core 0.9
-    public static final Coin DEFAULT_FEE_PER_KB = Coin.valueOf(15000);  // 0.1 mBTC per KB - a long used fee structure which works as of spam attacks of July 2015
-    public static final Coin MAXIMUM_FEE_PER_KB = Coin.valueOf(100000);  // 0.5 mBTC per KB
+    public static final Coin DEFAULT_FEE_PER_KB = Coin.valueOf(15000);  // 0.15 mBTC per KB - a long used fee structure which works as of spam attacks of July 2015
+    public static final Coin MAXIMUM_FEE_PER_KB = Coin.valueOf(200000);  // 2.0 mBTC per KB
     public static final String DONATION_ADDRESS = "Refactor this";
     public static final String DEFAULT_DONATION_AMOUNT = "0.01"; // in BTC as per BIP21
 
