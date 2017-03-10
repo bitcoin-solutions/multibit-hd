@@ -1402,6 +1402,7 @@ public class BitcoinNetworkService extends AbstractService {
   private void createNewPeerGroup(Wallet wallet, boolean useFastCatchup) throws TimeoutException {
     String[] dnsSeeds = new String[]{
                      /* "seed.bitcoin.sipa.be",        // Pieter Wuille - not reachable */
+      "dnsseed.internal",            // Internal Intranet DNS seed for environments without direct internet access.
       "dnsseed.bluematt.me",         // Matt Corallo
       "dnsseed.bitcoin.dashjr.org",  // Luke Dashjr
       "seed.bitcoinstats.com",       // Chris Decker
