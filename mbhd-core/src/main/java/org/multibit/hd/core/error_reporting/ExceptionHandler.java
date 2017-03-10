@@ -105,8 +105,8 @@ public class ExceptionHandler extends EventQueue implements Thread.UncaughtExcep
             nativeApplicationClass.getDeclaredConstructor(boolean.class).newInstance(true);
           } catch (IllegalStateException ise) {
             log.error("Unable to create dialog as one is already being shown");
-          } catch (Throwable t1) {
-            log.error("Unable to use standard error reporting dialog.", t1);
+          } catch (Exception e) {
+            log.error("Unable to use standard error reporting dialog.", e);
             try {
               // This should never happen due to static binding of the Swing library
               JOptionPane.showMessageDialog(null,
@@ -118,8 +118,8 @@ public class ExceptionHandler extends EventQueue implements Thread.UncaughtExcep
                 JOptionPane.ERROR_MESSAGE);
               // Fire a hard shutdown after dialog closes with emergency fallback
               CoreEvents.fireShutdownEvent(ShutdownEvent.ShutdownType.HARD);
-            } catch (Throwable t2) {
-              log.error("Unable to use fallback error reporting dialog. Forcing immediate shutdown.", t2);
+            } catch (Exception e1) {
+              log.error("Unable to use fallback error reporting dialog. Forcing immediate shutdown.", e1);
               // Safest option at this point is an emergency shutdown
               System.exit(-1);
             }
@@ -153,21 +153,21 @@ public class ExceptionHandler extends EventQueue implements Thread.UncaughtExcep
             nativeApplicationClass.getDeclaredConstructor(boolean.class).newInstance(false);
           } catch (IllegalStateException ise) {
             log.error("Unable to create dialog as one is already being shown");
-          } catch (Throwable t1) {
-            log.error("Unable to use standard error reporting dialog.", t1);
+          } catch (Exception e) {
+            log.error("Unable to use standard error reporting dialog.", e);
             try {
               // This should never happen due to static binding of the Swing library
               JOptionPane.showMessageDialog(null,
                 "Oh Snap!\n\n"
                   + "The error reporting system has failed with the following message:\n"
-                  + WordUtils.wrap(t1.getMessage(), 30)
+                  + WordUtils.wrap(e.getMessage(), 30)
                   + "\n\nMultiBit HD will exit and you should report this error to the MultiBit HD developers.",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
               // Fire a hard shutdown after dialog closes with emergency fallback
               CoreEvents.fireShutdownEvent(ShutdownEvent.ShutdownType.HARD);
-            } catch (Throwable t2) {
-              log.error("Unable to use fallback error reporting dialog. Forcing immediate shutdown.", t2);
+            } catch (Exception e1) {
+              log.error("Unable to use fallback error reporting dialog. Forcing immediate shutdown.", e1);
               // Safest option at this point is an emergency shutdown
               System.exit(-1);
             }
@@ -181,8 +181,8 @@ public class ExceptionHandler extends EventQueue implements Thread.UncaughtExcep
   protected void dispatchEvent(AWTEvent newEvent) {
     try {
       super.dispatchEvent(newEvent);
-    } catch (Throwable t) {
-      handleThrowable(t);
+    } catch (Exception e) {
+      handleThrowable(e);
     }
   }
 
@@ -383,7 +383,6 @@ public class ExceptionHandler extends EventQueue implements Thread.UncaughtExcep
         errorReportLogEntryList.add(entry.get());
       }
     }
-
     // Build the error report including basic operating system information
     ErrorReport errorReport = new ErrorReport();
     errorReport.setOsName(OSUtils.getOsName());
