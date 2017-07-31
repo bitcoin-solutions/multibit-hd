@@ -34,7 +34,7 @@ CTO, KeepKey
 
 ------
 
-Build status: [![Build Status](https://travis-ci.org/keepkey/multibit-hd.png?branch=develop)](https://travis-ci.org/keepkey/multibit-hd)
+Build status: [![Build Status](https://travis-ci.org/keepkey/multibit-hd.svg?branch=develop)](https://travis-ci.org/keepkey/multibit-hd)
 
 Project status: Pre-release. Expect minor bugs and UI adjustments. Suitable for small scale production.
 
