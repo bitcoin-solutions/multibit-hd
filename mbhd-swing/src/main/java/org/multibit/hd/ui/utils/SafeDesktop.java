@@ -40,13 +40,14 @@ public class SafeDesktop {
 
       try {
         Desktop desktop = Desktop.getDesktop();
-        if (desktop != null) {
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
           Desktop.getDesktop().browse(uri);
           // Assume success
           return true;
+        } else {
+          // Consider using xdg
+          return tryAltBrowse(uri);
         }
-
-        // Consider using xdg
 
       } catch (RuntimeException | IOException e) {
         // Probably a weird setup - just stop now
@@ -55,37 +56,46 @@ public class SafeDesktop {
 
 
     } else {
-      // GNOME libraries are probably not available check OS
-      if (!OSUtils.isLinux()) {
-        // This is Windows/OS X so probably a weird setup - just stop now
-        log.warn("No default browser configured.");
-        return false;
-      }
-
-      // Might have a chance with KDE libraries since we're on Linux
-      log.warn("Attempting to open browser with xdg-open");
-      try {
-        new ProcessBuilder(
-          "xdg-open",
-          uri.toString()
-        ).start();
-
-        // Need to include a call to waitFor() and examine the exit code to
-        // accurately determine success. This requires wrapping the code in
-        // a timeout executor which is more complex than it's worth at present
-
-        // Assume success
-        return true;
-
-      } catch (IOException e) {
-        log.warn("Failed to open external browser through 'xdg-open {}'", uri.toString(), e);
-      }
-
+        return tryAltBrowse(uri);
     }
 
     // Must have failed to be here
     return false;
 
+  }
+
+  /**
+   * <p>A method to try and use alternative ways to use the browse action on platforms where java standard code gives problems.</p>
+   * @param uri The URI to pass to the browser
+   * @return True if the browser opened successfully (i.e. no visible error to the JVM)
+   */
+  private static boolean tryAltBrowse(URI uri) {
+    // GNOME libraries are probably not available check OS
+    if (!OSUtils.isLinux()) {
+      // This is Windows/OS X so probably a weird setup - just stop now
+      log.warn("No default browser configured.");
+      return false;
+    }
+
+    // Might have a chance with KDE libraries since we're on Linux
+    log.warn("Attempting to open browser with xdg-open");
+    try {
+      new ProcessBuilder(
+              "xdg-open",
+              uri.toString()
+      ).start();
+
+      // Need to include a call to waitFor() and examine the exit code to
+      // accurately determine success. This requires wrapping the code in
+      // a timeout executor which is more complex than it's worth at present
+
+      // Assume success
+      return true;
+
+    } catch (IOException e) {
+      log.warn("Failed to open external browser through 'xdg-open {}'", uri.toString(), e);
+    }
+    return false;
   }
 
 }
