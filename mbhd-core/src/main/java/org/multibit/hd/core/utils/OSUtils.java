@@ -107,15 +107,8 @@ public final class OSUtils {
     final String os = getOsName().toLowerCase();
 
     // XXX: this obviously needs some more work to be "true" in general (see bottom of file)
-    if ((os.contains("sunos")) || (os.contains("linux"))) {
-      return true;
-    }
+    return (os.contains("sunos")) || (os.contains("linux")) || isMac() && (System.getProperty("os.version", "").startsWith("10."));
 
-    if (isMac() && (System.getProperty("os.version", "").startsWith("10."))) {
-      return true;
-    }
-
-    return false;
   }
 
   /**

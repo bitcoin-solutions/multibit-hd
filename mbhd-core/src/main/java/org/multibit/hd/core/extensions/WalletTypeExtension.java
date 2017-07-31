@@ -84,9 +84,7 @@ public class WalletTypeExtension implements WalletExtension {
 
     WalletTypeExtension that = (WalletTypeExtension) o;
 
-    if (walletType != that.walletType) return false;
-
-    return true;
+    return walletType == that.walletType;
   }
 
   @Override
